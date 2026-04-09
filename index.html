@@ -5,58 +5,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flipkart Image Downloader</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fb;
       margin: 0;
-      padding: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f3f6fb, #e8eefc);
+      min-height: 100vh;
+      padding: 20px;
     }
 
     .wrap {
-      max-width: 700px;
-      margin: 50px auto;
-      background: #fff;
+      max-width: 760px;
+      margin: 30px auto;
+      background: #ffffff;
       padding: 24px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      border-radius: 20px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
     }
 
     h1 {
-      margin-top: 0;
-      font-size: 28px;
-      color: #222;
+      margin: 0 0 10px;
       text-align: center;
+      color: #1f1f1f;
+      font-size: 30px;
     }
 
-    p {
-      color: #555;
+    .subtext {
       text-align: center;
-      margin-bottom: 20px;
+      color: #5f6368;
+      font-size: 15px;
+      margin-bottom: 24px;
+      line-height: 1.6;
     }
 
     .row {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
     input {
       flex: 1;
-      min-width: 250px;
-      padding: 14px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
+      min-width: 240px;
+      padding: 15px 16px;
+      border: 1px solid #d0d7e2;
+      border-radius: 12px;
       font-size: 15px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #2874f0;
+      box-shadow: 0 0 0 3px rgba(40, 116, 240, 0.12);
     }
 
     button {
-      padding: 14px 18px;
+      padding: 15px 20px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       background: #2874f0;
       color: white;
       font-size: 15px;
       cursor: pointer;
+      font-weight: 600;
     }
 
     button:hover {
@@ -65,64 +79,148 @@
 
     .status {
       margin-top: 16px;
-      font-size: 14px;
-      color: #444;
+      font-size: 15px;
+      color: #333;
+      min-height: 24px;
     }
 
     .result {
       margin-top: 24px;
       display: none;
+      background: #fafbfd;
+      border: 1px solid #e7ebf3;
+      border-radius: 18px;
+      padding: 18px;
     }
 
-    .result img {
+    .product-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1d1d1d;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .img-box {
+      text-align: center;
+    }
+
+    .img-box img {
       width: 100%;
-      max-width: 400px;
-      display: block;
-      margin: 0 auto 15px;
-      border-radius: 12px;
+      max-width: 420px;
+      max-height: 420px;
+      object-fit: contain;
+      border-radius: 14px;
       border: 1px solid #ddd;
+      background: white;
+      padding: 10px;
     }
 
     .actions {
       text-align: center;
+      margin-top: 18px;
     }
 
     .download-link {
       display: inline-block;
-      padding: 12px 18px;
+      padding: 13px 20px;
       background: #111;
       color: #fff;
       text-decoration: none;
-      border-radius: 10px;
+      border-radius: 12px;
+      font-weight: 600;
     }
 
-    .small {
+    .download-link:hover {
+      background: #000;
+    }
+
+    .meta {
+      margin-top: 16px;
       font-size: 12px;
-      color: #777;
-      margin-top: 12px;
-      text-align: center;
+      color: #666;
       word-break: break-all;
+      line-height: 1.7;
+      background: #fff;
+      border: 1px solid #eceff5;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .meta strong {
+      color: #222;
+    }
+
+    .tips {
+      margin-top: 22px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #f5f8ff;
+      color: #4b5563;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 600px) {
+      .wrap {
+        padding: 18px;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+
+      button {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Flipkart Image Downloader</h1>
-    <p>Flipkart product link paste korle main image preview aar download pabe</p>
+    <div class="subtext">
+      Flipkart product link paste korle main product image preview aar download korte parbe
+    </div>
 
     <div class="row">
-      <input id="productUrl" type="text" placeholder="Paste Flipkart product URL" />
+      <input
+        id="productUrl"
+        type="text"
+        placeholder="Paste Flipkart product URL"
+      />
       <button onclick="getImage()">Get Image</button>
     </div>
 
     <div class="status" id="status"></div>
 
     <div class="result" id="result">
-      <img id="preview" src="" alt="Product image preview" />
-      <div class="actions">
-        <a id="downloadBtn" class="download-link" href="#" download="flipkart-product-image.jpg">Download Image</a>
+      <div class="product-title" id="productTitle">Product Title</div>
+
+      <div class="img-box">
+        <img id="preview" src="" alt="Product image preview" />
       </div>
-      <div class="small" id="imageUrlText"></div>
+
+      <div class="actions">
+        <a
+          id="downloadBtn"
+          class="download-link"
+          href="#"
+          download="flipkart-product-image.jpg"
+        >
+          Download Image
+        </a>
+      </div>
+
+      <div class="meta">
+        <div><strong>Image URL:</strong> <span id="imageUrlText"></span></div>
+        <div style="margin-top:8px;"><strong>Final URL:</strong> <span id="finalUrlText"></span></div>
+      </div>
+    </div>
+
+    <div class="tips">
+      Tip: Short link, affiliate link, normal Flipkart link — sob try korte parbe.  
+      Jodi kono product e image na ashe, tahole link ta abar open kore full product URL niye try koro.
     </div>
   </div>
 
@@ -136,6 +234,8 @@
       const preview = document.getElementById("preview");
       const downloadBtn = document.getElementById("downloadBtn");
       const imageUrlText = document.getElementById("imageUrlText");
+      const finalUrlText = document.getElementById("finalUrlText");
+      const productTitle = document.getElementById("productTitle");
 
       const url = input.value.trim();
 
@@ -148,7 +248,7 @@
       }
 
       try {
-        status.textContent = "Fetching image...";
+        status.textContent = "Fetching product image...";
 
         const res = await fetch(API_URL, {
           method: "POST",
@@ -170,7 +270,9 @@
 
         preview.src = data.image;
         downloadBtn.href = data.image;
-        imageUrlText.textContent = data.image;
+        imageUrlText.textContent = data.image || "";
+        finalUrlText.textContent = data.finalUrl || "";
+        productTitle.textContent = data.title || "Flipkart Product";
         result.style.display = "block";
         status.textContent = "Image found successfully.";
       } catch (err) {
