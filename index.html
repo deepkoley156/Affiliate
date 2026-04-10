@@ -82,6 +82,8 @@
       font-size: 15px;
       color: #333;
       min-height: 24px;
+      line-height: 1.6;
+      word-break: break-word;
     }
 
     .result {
@@ -99,6 +101,7 @@
       color: #1d1d1d;
       margin-bottom: 14px;
       line-height: 1.5;
+      word-break: break-word;
     }
 
     .img-box {
@@ -119,9 +122,14 @@
     .actions {
       text-align: center;
       margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
-    .download-link {
+    .download-link,
+    .retry-btn {
       display: inline-block;
       padding: 13px 20px;
       background: #111;
@@ -129,6 +137,17 @@
       text-decoration: none;
       border-radius: 12px;
       font-weight: 600;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .retry-btn {
+      background: #2874f0;
+    }
+
+    .retry-btn:hover {
+      background: #1659c7;
     }
 
     .download-link:hover {
@@ -159,6 +178,10 @@
       color: #4b5563;
       font-size: 13px;
       line-height: 1.7;
+    }
+
+    .hidden {
+      display: none !important;
     }
 
     @media (max-width: 600px) {
@@ -210,6 +233,10 @@
         >
           Download Image
         </a>
+
+        <button id="retryBtn" class="retry-btn hidden" onclick="retryWithFinalUrl()">
+          Retry With Final URL
+        </button>
       </div>
 
       <div class="meta">
@@ -219,15 +246,16 @@
     </div>
 
     <div class="tips">
-      Tip: Short link, affiliate link, normal Flipkart link — sob try korte parbe.  
-      Jodi kono product e image na ashe, tahole link ta abar open kore full product URL niye try koro.
+      Tip: Short link, affiliate link, normal Flipkart link — sob try korte parbe.
+      Jodi kono short link e image na ashe, tahole Retry With Final URL click koro.
     </div>
   </div>
 
   <script>
     const API_URL = "https://imagefatch.pradipkoley996.workers.dev/";
+    let lastFinalUrl = "";
 
-    async function getImage() {
+    async function getImage(customUrl = null) {
       const input = document.getElementById("productUrl");
       const status = document.getElementById("status");
       const result = document.getElementById("result");
@@ -236,11 +264,14 @@
       const imageUrlText = document.getElementById("imageUrlText");
       const finalUrlText = document.getElementById("finalUrlText");
       const productTitle = document.getElementById("productTitle");
+      const retryBtn = document.getElementById("retryBtn");
 
-      const url = input.value.trim();
+      const url = (customUrl || input.value).trim();
 
       result.style.display = "none";
+      retryBtn.classList.add("hidden");
       status.textContent = "";
+      lastFinalUrl = "";
 
       if (!url) {
         status.textContent = "Please paste a Flipkart product URL.";
@@ -259,9 +290,17 @@
         });
 
         const data = await res.json();
+        lastFinalUrl = data.finalUrl || "";
 
         if (!res.ok) {
-          throw new Error(data.error || "Failed to fetch image.");
+          if (data.finalUrl && data.finalUrl !== url) {
+            retryBtn.classList.remove("hidden");
+          }
+
+          throw new Error(
+            (data.error || "Failed to fetch image.") +
+            (data.finalUrl ? " | Final URL: " + data.finalUrl : "")
+          );
         }
 
         if (!data.image) {
@@ -275,9 +314,20 @@
         productTitle.textContent = data.title || "Flipkart Product";
         result.style.display = "block";
         status.textContent = "Image found successfully.";
+
+        if (data.finalUrl && data.finalUrl !== url) {
+          retryBtn.classList.remove("hidden");
+        }
       } catch (err) {
         status.textContent = "Error: " + err.message;
       }
+    }
+
+    function retryWithFinalUrl() {
+      const input = document.getElementById("productUrl");
+      if (!lastFinalUrl) return;
+      input.value = lastFinalUrl;
+      getImage(lastFinalUrl);
     }
   </script>
 </body>
